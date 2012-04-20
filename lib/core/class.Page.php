@@ -2,6 +2,7 @@
 
 class Page {
 
+	public $rooturi = '/';
 	public $uri;
 	public $urlpath;
 	public $incpath;
@@ -21,6 +22,7 @@ class Page {
 	public $head = array();
 	public $templates = array();
 	public $is_ajax_request = false;
+	
 	protected $cache_is_buffering = array();
 	protected $cache_already_output = array();
 	protected $css_added = array();
