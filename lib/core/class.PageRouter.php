@@ -25,6 +25,7 @@ class PageRouter {
 	public $page = array();
 	public $page_path = array();
 	public $prefix = null;
+	public $rooturi = null;
 	public $qs = array();
 	public $scripts = array();
 	public $settings = array();
@@ -40,6 +41,7 @@ class PageRouter {
 		if ($o->page_path_default) $this->page_path_default = $o->page_path_default;
 		if ($o->page_path_404) $this->page_path_404 = $o->page_path_404;
 		$this->uri = $o->uri;
+		$this->rooturi = $o->rooturi;
 	}
 
 	public function routeURI() {
