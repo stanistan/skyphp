@@ -14,34 +14,61 @@
 
 class PageRouter {
 	
-	// following properties are not reset with SkyRouter::cleanSettings()
+	const E_NO_ARGS = 'Constrctor arguments required.';
+	const E_NOT_ASSOC = 'Constructor arguments needs to be associative.';
+
+	# following properties are not reset with SkyRouter::cleanSettings()
 	public $codebase_paths = array();
 	public $db = null;
 	public $page_path_default = 'pages/default/default.php';
 	public $page_path_404 = 'pages/404.php';
+	public $rooturi = '/';
 
-	// following properties are reest with SkyRouter::cleanSettings()
+	# following properties are reest with SkyRouter::cleanSettings()
 	public $is_default = false;
 	public $page = array();
 	public $page_path = array();
 	public $prefix = null;
-	public $rooturi = null;
 	public $qs = array();
 	public $scripts = array();
 	public $settings = array();
 	public $vars = array();
 	
 	public function __construct($o = array()) {
-		if (!$o) throw new Exception('Constructor arguments required.');
-		if (!is_assoc($o)) throw new Exception('Contsructor argument needs to be associative.');
+		
+		if (!$o) throw new Exception(self::E_NO_ARGS);
+		if (!is_assoc($o)) throw new Exception(self::E_NOT_ASSOC);
 
 		$o = (object) $o;
-		$this->codebase_paths = $o->codebase_paths;
-		$this->db = $o->db;
-		if ($o->page_path_default) $this->page_path_default = $o->page_path_default;
-		if ($o->page_path_404) $this->page_path_404 = $o->page_path_404;
-		$this->uri = $o->uri;
-		$this->rooturi = $o->rooturi;
+		$this->configure($o);
+
+	}
+
+	public function configure(stdClass $o) {
+		
+		# these fields are always set on the object
+		$always_set = array(
+			'codebase_paths', 
+			'db', 
+			'uri'
+		);
+
+		foreach ($always_set as $k) {
+			$this->{$k} = $o->{$k};
+		}
+
+		# these fields are only set if they are non-empty
+		$set_if_non_empty = array(
+			'page_path_default', 
+			'page_path_404', 
+			'rooturi'
+		);
+
+		foreach ($set_if_non_empty as $k) {
+			if (!$o->{$k}) continue;
+			$this->{$k} = $o->{$k};
+		}
+
 	}
 
 	public function routeURI() {

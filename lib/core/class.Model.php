@@ -1726,7 +1726,7 @@ class Model implements ArrayAccess {
 **/
 
 	public function validate() {
-		
+
 		# run preValidation if the method is defined
 		# validation does not continue if there are errors
 		if ($this->methodExists('preValidate')) $this->preValidate();
