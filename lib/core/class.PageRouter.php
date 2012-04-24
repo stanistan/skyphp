@@ -17,6 +17,21 @@ class PageRouter {
 	const E_NO_ARGS = 'Constrctor arguments required.';
 	const E_NOT_ASSOC = 'Constructor arguments needs to be associative.';
 
+	# when in PageRouter::configure(), these are the options used
+	# to see what properties can be empty
+	public static $config_options = array(
+		'always_set' => array(
+			'codebase_path',
+			'db',
+			'uri'
+		),
+		'set_if_non_empty' => array(
+			'page_path_default',
+			'page_path_404',
+			'rooturi'
+		)
+	);
+
 	# following properties are not reset with SkyRouter::cleanSettings()
 	public $codebase_paths = array();
 	public $db = null;
@@ -34,36 +49,33 @@ class PageRouter {
 	public $settings = array();
 	public $vars = array();
 	
-	public function __construct($o = array()) {
+	public function __construct($configs = array()) {
 		
-		if (!$o) throw new Exception(self::E_NO_ARGS);
-		if (!is_assoc($o)) throw new Exception(self::E_NOT_ASSOC);
+		if (!$configs) throw new Exception(self::E_NO_ARGS);
+		if (!is_assoc($configs)) throw new Exception(self::E_NOT_ASSOC);
 
-		$o = (object) $o;
-		$this->configure($o);
+		$this->configure($configs);
 
 	}
 
-	public function configure(stdClass $o) {
+
+	/*
+		@param associative array
+		matches up keys in the associative array to defined $always_set/$set_if_non_empty
+		and does that for each of the keys
+	*/
+	public function configure($o = array()) {
+
+		$o = (object) $o;
 		
 		# these fields are always set on the object
-		$always_set = array(
-			'codebase_paths', 
-			'db', 
-			'uri'
-		);
-
+		$always_set = self::$config_options['always_set'];
 		foreach ($always_set as $k) {
 			$this->{$k} = $o->{$k};
 		}
 
 		# these fields are only set if they are non-empty
-		$set_if_non_empty = array(
-			'page_path_default', 
-			'page_path_404', 
-			'rooturi'
-		);
-
+		$set_if_non_empty = self::$config_options['set_if_non_empty'];
 		foreach ($set_if_non_empty as $k) {
 			if (!$o->{$k}) continue;
 			$this->{$k} = $o->{$k};
