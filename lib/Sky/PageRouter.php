@@ -1,5 +1,7 @@
 <?
 
+namespace Sky;
+
 /*
 
 	$o = new SkyRouter(array(
@@ -19,7 +21,7 @@ class PageRouter {
 
 	# when in PageRouter::configure(), these are the options used
 	# to see what properties can be empty
-	public static $config_options = array(
+	private static $config_options = array(
 		'always_set' => array(
 			'codebase_path',
 			'db',
@@ -211,7 +213,7 @@ class PageRouter {
                 	if ($this->settings['database_folder']['where']) {
                 		$sql .= ' and ' . $this->settings['database_folder']['where'];
                 	}
-                	elapsed($sql);
+                	\elapsed($sql);
                 	$r = sql($sql);
                 	if (!$r->EOF) $lookup_id = $r->Fields('id');
                 	$r = null;
@@ -283,7 +285,7 @@ class PageRouter {
 		add script to scripts array if file exists
 	*/
 	private function appendScript($f) {
-		if (!file_exists_incpath($f)) return;
+		if (!\file_exists_incpath($f)) return;
 		$this->scripts[$f] = true;
 	}
 
@@ -300,7 +302,7 @@ class PageRouter {
 		using $__file__ because it is unlikely to appear in the settings file
 	*/
 	private function includeToSettings($__file__) {
-		if (!file_exists_incpath($__file__)) return;
+		if (!\file_exists_incpath($__file__)) return;
 		include $__file__;
 		$vars = get_defined_vars();
 		unset($vars['__file__']);
@@ -326,12 +328,12 @@ class PageRouter {
 			header("HTTP/1.1 503 Service Temporarily Unavailable");
 	        header("Status: 503 Service Temporarily Unavailable");
 	        header("Retry-After: 1");
-	        throw new Exception('Profile Page Error: $primary_table not specified on file. <br />' . $file);
+	        throw new \Exception('Profile Page Error: $primary_table not specified on file. <br />' . $file);
 	        return false;
 		}
 
 		// set to profile
-		$decrypted = decrypt($piece, $this->settings['primary_table']);
+		$decrypted = \decrypt($piece, $this->settings['primary_table']);
 		if ($piece == 'add-new' || is_numeric($decrypted)) {
 			$this->addToPageAndPath($file, $path, $i);
 			return true;
